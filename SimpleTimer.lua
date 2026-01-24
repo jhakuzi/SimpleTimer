@@ -37,7 +37,7 @@ function SimpleTimer:CreateFrame()
     self.durationInput:SetPoint("TOPLEFT", 130, -30)
     self.durationInput:SetAutoFocus(false)
     self.durationInput:SetNumeric(true)
-    self.durationInput:SetText("5") -- Default 5 minutes
+    self.durationInput:SetText("10") -- Default 10 minutes
 
     -- Timer display
     self.timerDisplay = self.frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
@@ -161,7 +161,7 @@ function SimpleTimer:TimerFinished()
     self.timerDisplay:SetText("00:00")
 
     -- Play sound or show notification
-    PlaySound(SOUNDKIT.IG_QUEST_LOG_OPEN, "Master")
+    PlaySound(8960, "Master")
 
     -- You could add more notification options here
     print("SimpleTimer: Timer finished!")
