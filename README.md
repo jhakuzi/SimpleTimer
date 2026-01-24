@@ -15,9 +15,8 @@ A simple World of Warcraft addon that provides a countdown timer with start/paus
 
 1. Copy the `SimpleTimer` folder to your World of Warcraft addons directory:
    - Retail: `World of Warcraft/_retail_/Interface/AddOns/`
-   - Classic: `World of Warcraft/_classic_/Interface/AddOns/`
 
-2. Restart World of Warcraft or reload your UI with `/reload`
+2. Reload your UI with `/reload`
 
 ## Usage
 
