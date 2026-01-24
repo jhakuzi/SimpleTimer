@@ -3,6 +3,6 @@
 ## Notes: A simple countdown timer addon with start/pause/reset functionality
 ## Author: Jhakuzi
 ## Version: 1.0
-## IconTexture: Interface\Icons\spell_holy_powerwordshield
+## IconTexture: Interface\Icons\spell_mage_altertime
 
 SimpleTimer.lua
