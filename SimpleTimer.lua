@@ -1,7 +1,8 @@
--- SimpleTimer Addon
--- A simple countdown timer with start/pause/reset functionality
+local addonName, SimpleTimer = ...
 
-local SimpleTimer = {}
+-- Localize WoW API for performance
+local GetTime = GetTime
+local CreateFrame = CreateFrame
 
 -- Timer variables
 SimpleTimer.remainingTime = 0
@@ -38,6 +39,7 @@ function SimpleTimer:CreateFrame()
     self.durationInput:SetAutoFocus(false)
     self.durationInput:SetNumeric(true)
     self.durationInput:SetText("10") -- Default 10 minutes
+    self.durationInput:SetMaxLetters(3)
 
     -- Timer display
     self.timerDisplay = self.frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
@@ -71,8 +73,14 @@ end
 
 -- Update timer display
 function SimpleTimer:UpdateDisplay()
-    if self.remainingTime > 0 then
-        self.timerDisplay:SetText(self:FormatTime(self.remainingTime))
+    local displayTime = self.remainingTime
+    if self.isRunning then
+        local elapsed = GetTime() - self.startTime
+        displayTime = math.max(0, self.remainingTime - elapsed)
+    end
+
+    if displayTime > 0 then
+        self.timerDisplay:SetText(self:FormatTime(displayTime))
     else
         self.timerDisplay:SetText("00:00")
     end
@@ -137,28 +145,30 @@ function SimpleTimer:ToggleTimer()
 end
 
 -- Update timer on each frame
-function SimpleTimer:OnUpdate()
+function SimpleTimer:OnUpdate(elapsed)
     if self.isRunning then
-        local elapsed = GetTime() - self.startTime
-        local newRemaining = math.max(0, self.remainingTime - elapsed)
+        self.lastUpdate = (self.lastUpdate or 0) + elapsed
 
-        if newRemaining ~= self.remainingTime then
-            self.remainingTime = newRemaining
+        -- Only update once per second
+        if self.lastUpdate >= 1 then
+            local elapsedTime = GetTime() - self.startTime
+            local currentRemaining = math.max(0, self.remainingTime - elapsedTime)
+
             self:UpdateDisplay()
 
             -- Check if timer finished
-            if self.remainingTime <= 0 then
+            if currentRemaining <= 0 then
                 self:TimerFinished()
             end
+
+            self.lastUpdate = self.lastUpdate - 1
         end
     end
 end
 
 -- Handle timer completion
 function SimpleTimer:TimerFinished()
-    self.isRunning = false
-    self.startPauseButton:SetText("Start")
-    self.timerDisplay:SetText("00:00")
+    self:ResetTimer()
 
     -- Play sound or show notification
     PlaySound(8960, "Master")
@@ -169,11 +179,7 @@ end
 
 -- Toggle the timer window
 function SimpleTimer:ToggleWindow()
-    if self.frame:IsShown() then
-        self.frame:Hide()
-    else
-        self.frame:Show()
-    end
+    self.frame:SetShown(not self.frame:IsShown())
 end
 
 -- Initialize the addon
@@ -186,7 +192,7 @@ function SimpleTimer:Initialize()
     SlashCmdList["SIMPLETIMER"] = function() self:ToggleWindow() end
 
     -- Set up update handler
-    self.frame:SetScript("OnUpdate", function() self:OnUpdate() end)
+    self.frame:SetScript("OnUpdate", function(_, elapsed) self:OnUpdate(elapsed) end)
 
     print("SimpleTimer loaded! Use /timer to toggle the timer window.")
 end
