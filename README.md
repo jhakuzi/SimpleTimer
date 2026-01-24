@@ -21,7 +21,7 @@ A simple World of Warcraft addon that provides a countdown timer with start/paus
 ## Usage
 
 1. Type `/timer` in chat to show/hide the timer window
-2. Enter the desired duration in minutes (default is 5)
+2. Enter the desired duration in minutes (default is 10)
 3. Click "Start" to begin the countdown
 4. Click "Pause" to pause the timer (becomes "Resume" button)
 5. Click "Reset" to stop and reset the timer
