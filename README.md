@@ -29,7 +29,7 @@ A simple World of Warcraft addon that provides a countdown timer and a stopwatch
 
 ## Usage
 
-1. Type `/timer` in chat to show/hide the window.
+1. Type `/timer` or `/simpletimer` in chat to show/hide the window.
 2. Use the **Tabs** at the top to switch between "Timer" and "SimpleWatch".
 
 ### Using the Timer
@@ -40,11 +40,6 @@ A simple World of Warcraft addon that provides a countdown timer and a stopwatch
 ### Using the Stopwatch
 1. Select the **SimpleWatch** tab.
 2. Click "Start" to begin counting up.
-
-## Commands
-
-- `/timer` - Toggle the timer window
-- `/simpletimer` - Alternative command to toggle the window
 
 ## Notes
 
