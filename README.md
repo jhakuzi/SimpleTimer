@@ -1,15 +1,24 @@
-# SimpleTimer
+# SimpleTimer & SimpleWatch
 
-A simple World of Warcraft addon that provides a countdown timer with start/pause/reset functionality.
+A simple World of Warcraft addon that provides a countdown timer and a stopwatch with a clean, tabbed interface.
 
 ## Features
 
+### Timer Tab
 - **Duration Input**: Enter timer duration in minutes
-- **Start/Pause/Resume**: Single button that changes function based on timer state
-- **Reset**: Reset the timer back to zero
-- **Visual Display**: Large MM:SS countdown display
-- **Chat Command**: Use `/timer` or `/simpletimer` to toggle the timer window
+- **Countdown**: Counts down from the set time
+- **Notification**: Plays a sound when the timer finishes
+
+### SimpleWatch Tab (New!)
+- **Stopwatch**: A count-up timer to track elapsed time
+- **Independent**: Runs independently of the countdown timer
+
+### Common Features
+- **Start/Pause/Resume**: Controls for both timer and stopwatch
+- **Reset**: Reset to zero
+- **Chat Command**: Use `/timer` or `/simpletimer` to toggle the window
 - **Movable Window**: Drag the window anywhere on screen
+- **Persistent Operation**: Timer and Stopwatch continue running even if you switch tabs or hide the window
 
 ## Installation
 
@@ -20,12 +29,17 @@ A simple World of Warcraft addon that provides a countdown timer with start/paus
 
 ## Usage
 
-1. Type `/timer` in chat to show/hide the timer window
-2. Enter the desired duration in minutes (default is 10)
-3. Click "Start" to begin the countdown
-4. Click "Pause" to pause the timer (becomes "Resume" button)
-5. Click "Reset" to stop and reset the timer
-6. When the timer reaches 00:00, you'll hear a notification sound
+1. Type `/timer` in chat to show/hide the window.
+2. Use the **Tabs** at the top to switch between "Timer" and "SimpleWatch".
+
+### Using the Timer
+1. Select the **Timer** tab.
+2. Enter the desired duration in minutes (default is 10).
+3. Click "Start" to begin.
+
+### Using the Stopwatch
+1. Select the **SimpleWatch** tab.
+2. Click "Start" to begin counting up.
 
 ## Commands
 
@@ -34,6 +48,6 @@ A simple World of Warcraft addon that provides a countdown timer with start/paus
 
 ## Notes
 
-- The timer window is movable - click and drag the title bar
-- Timer continues counting down even when the window is hidden
-- A sound notification plays when the timer finishes
+- The timer window is movable - click and drag the title bar.
+- Timer and Stopwatch state is maintained when switching tabs.
+- A sound notification plays when the countdown timer finishes.
