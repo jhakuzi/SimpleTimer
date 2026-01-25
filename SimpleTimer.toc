@@ -6,3 +6,4 @@
 ## IconTexture: Interface\Icons\spell_mage_altertime
 
 SimpleTimer.lua
+SimpleWatch.lua

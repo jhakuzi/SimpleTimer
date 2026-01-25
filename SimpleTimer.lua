@@ -10,58 +10,105 @@ SimpleTimer.totalTime = 0
 SimpleTimer.isRunning = false
 SimpleTimer.startTime = 0
 
--- Create the main frame
-function SimpleTimer:CreateFrame()
+-- Create the main frame with tabs
+function SimpleTimer:CreateMainFrame()
     -- Main frame
     self.frame = CreateFrame("Frame", "SimpleTimerFrame", UIParent, "BasicFrameTemplateWithInset")
-    self.frame:SetSize(250, 180)
+    self.frame:SetSize(240, 180)
     self.frame:SetPoint("CENTER")
     self.frame:SetMovable(true)
     self.frame:EnableMouse(true)
     self.frame:RegisterForDrag("LeftButton")
     self.frame:SetScript("OnDragStart", self.frame.StartMoving)
     self.frame:SetScript("OnDragStop", self.frame.StopMovingOrSizing)
-
+    
     -- Title
     self.frame.title = self.frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     self.frame.title:SetPoint("TOP", 0, -5)
     self.frame.title:SetText("Simple Timer")
 
+    -- Tab 1: Timer
+    self.tab1 = CreateFrame("Button", nil, self.frame, "GameMenuButtonTemplate")
+    self.tab1:SetSize(80, 20)
+    self.tab1:SetPoint("TOPLEFT", self.frame, "TOP", -90, -35)
+    self.tab1:SetText("Timer")
+    self.tab1:SetScript("OnClick", function() self:SelectTab(1) end)
+
+    -- Tab 2: SimpleWatch
+    self.tab2 = CreateFrame("Button", nil, self.frame, "GameMenuButtonTemplate")
+    self.tab2:SetSize(100, 20)
+    self.tab2:SetPoint("LEFT", self.tab1, "RIGHT", 0, 0)
+    self.tab2:SetText("SimpleWatch")
+    self.tab2:SetScript("OnClick", function() self:SelectTab(2) end)
+
+    -- Content Container
+    self.contentFrame = CreateFrame("Frame", nil, self.frame)
+    self.contentFrame:SetPoint("TOPLEFT", 10, -60)
+    self.contentFrame:SetPoint("BOTTOMRIGHT", -10, 10)
+
+    -- Create Views
+    self.timerFrame = self:CreateTimerUI(self.contentFrame)
+    self.simpleWatchFrame = self:CreateSimpleWatchUI(self.contentFrame)
+
+    -- Initial Select
+    self:SelectTab(1)
+
+    -- Hide the frame initially
+    self.frame:Hide()
+end
+
+function SimpleTimer:SelectTab(id)
+    if id == 1 then
+        self.timerFrame:Show()
+        self.simpleWatchFrame:Hide()
+        self.tab1:Disable()
+        self.tab2:Enable()
+    else
+        self.timerFrame:Hide()
+        self.simpleWatchFrame:Show()
+        self.tab1:Enable()
+        self.tab2:Disable()
+    end
+end
+
+function SimpleTimer:CreateTimerUI(parent)
+    local frame = CreateFrame("Frame", nil, parent)
+    frame:SetAllPoints()
+
     -- Duration input label
-    local durationLabel = self.frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    durationLabel:SetPoint("TOPLEFT", 20, -35)
-    durationLabel:SetText("Duration (minutes):")
+    local durationLabel = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    durationLabel:SetPoint("TOPLEFT", 10, -10)
+    durationLabel:SetText("Duration (min):")
 
     -- Duration input box
-    self.durationInput = CreateFrame("EditBox", nil, self.frame, "InputBoxTemplate")
-    self.durationInput:SetSize(60, 20)
-    self.durationInput:SetPoint("TOPLEFT", 130, -30)
+    self.durationInput = CreateFrame("EditBox", nil, frame, "InputBoxTemplate")
+    self.durationInput:SetSize(50, 20)
+    self.durationInput:SetPoint("TOPLEFT", 120, -5)
     self.durationInput:SetAutoFocus(false)
     self.durationInput:SetNumeric(true)
     self.durationInput:SetText("10") -- Default 10 minutes
     self.durationInput:SetMaxLetters(3)
 
     -- Timer display
-    self.timerDisplay = self.frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
+    self.timerDisplay = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
     self.timerDisplay:SetPoint("CENTER", 0, 10)
     self.timerDisplay:SetText("00:00")
 
     -- Start/Pause button
-    self.startPauseButton = CreateFrame("Button", nil, self.frame, "GameMenuButtonTemplate")
+    self.startPauseButton = CreateFrame("Button", nil, frame, "GameMenuButtonTemplate")
     self.startPauseButton:SetSize(80, 25)
-    self.startPauseButton:SetPoint("BOTTOMLEFT", 20, 20)
+    self.startPauseButton:SetPoint("BOTTOMLEFT", 10, 10)
     self.startPauseButton:SetText("Start")
     self.startPauseButton:SetScript("OnClick", function() SimpleTimer:ToggleTimer() end)
 
     -- Reset button
-    self.resetButton = CreateFrame("Button", nil, self.frame, "GameMenuButtonTemplate")
+    self.resetButton = CreateFrame("Button", nil, frame, "GameMenuButtonTemplate")
     self.resetButton:SetSize(80, 25)
-    self.resetButton:SetPoint("BOTTOMRIGHT", -20, 20)
+    self.resetButton:SetPoint("BOTTOMRIGHT", -10, 10)
     self.resetButton:SetText("Reset")
     self.resetButton:SetScript("OnClick", function() SimpleTimer:ResetTimer() end)
 
-    -- Hide the frame initially
-    self.frame:Hide()
+    return frame
 end
 
 -- Format time as MM:SS
@@ -146,23 +193,28 @@ end
 
 -- Update timer on each frame
 function SimpleTimer:OnUpdate(elapsed)
-    if self.isRunning then
-        self.lastUpdate = (self.lastUpdate or 0) + elapsed
+    self.lastUpdate = (self.lastUpdate or 0) + elapsed
 
-        -- Only update once per second
-        if self.lastUpdate >= 1 then
-            local elapsedTime = GetTime() - self.startTime
-            local currentRemaining = math.max(0, self.remainingTime - elapsedTime)
-
-            self:UpdateDisplay()
-
-            -- Check if timer finished
-            if currentRemaining <= 0 then
-                self:TimerFinished()
-            end
-
-            self.lastUpdate = self.lastUpdate - 1
+    -- Only update once per 0.1s for smoother stopwatch, but timer logic can check every 1s
+    if self.lastUpdate >= 0.1 then
+        
+        -- Timer Logic
+        if self.isRunning then
+             local elapsedTime = GetTime() - self.startTime
+             local currentRemaining = math.max(0, self.remainingTime - elapsedTime)
+             self:UpdateDisplay()
+             
+             if currentRemaining <= 0 then
+                 self:TimerFinished()
+             end
         end
+
+        -- Stopwatch Logic
+        if self.stopwatchRunning then
+            self:UpdateStopwatch()
+        end
+
+        self.lastUpdate = 0
     end
 end
 
@@ -184,7 +236,7 @@ end
 
 -- Initialize the addon
 function SimpleTimer:Initialize()
-    self:CreateFrame()
+    self:CreateMainFrame()
 
     -- Register slash commands
     SLASH_SIMPLETIMER1 = "/timer"
