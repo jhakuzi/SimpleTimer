@@ -7,3 +7,4 @@
 
 SimpleTimer.lua
 SimpleWatch.lua
+SimpleReminder.lua

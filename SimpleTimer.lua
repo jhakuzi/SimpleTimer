@@ -14,7 +14,7 @@ SimpleTimer.startTime = 0
 function SimpleTimer:CreateMainFrame()
     -- Main frame
     self.frame = CreateFrame("Frame", "SimpleTimerFrame", UIParent, "BasicFrameTemplateWithInset")
-    self.frame:SetSize(240, 180)
+    self.frame:SetSize(270, 180)
     self.frame:SetPoint("CENTER")
     self.frame:SetMovable(true)
     self.frame:EnableMouse(true)
@@ -30,7 +30,7 @@ function SimpleTimer:CreateMainFrame()
     -- Tab 1: Timer
     self.tab1 = CreateFrame("Button", nil, self.frame, "GameMenuButtonTemplate")
     self.tab1:SetSize(80, 20)
-    self.tab1:SetPoint("TOPLEFT", self.frame, "TOP", -90, -35)
+    self.tab1:SetPoint("TOPLEFT", self.frame, "TOP", -130, -35)
     self.tab1:SetText("Timer")
     self.tab1:SetScript("OnClick", function() self:SelectTab(1) end)
 
@@ -41,6 +41,13 @@ function SimpleTimer:CreateMainFrame()
     self.tab2:SetText("SimpleWatch")
     self.tab2:SetScript("OnClick", function() self:SelectTab(2) end)
 
+    -- Tab 3: Reminder
+    self.tab3 = CreateFrame("Button", nil, self.frame, "GameMenuButtonTemplate")
+    self.tab3:SetSize(80, 20)
+    self.tab3:SetPoint("LEFT", self.tab2, "RIGHT", 0, 0)
+    self.tab3:SetText("Reminder")
+    self.tab3:SetScript("OnClick", function() self:SelectTab(3) end)
+
     -- Content Container
     self.contentFrame = CreateFrame("Frame", nil, self.frame)
     self.contentFrame:SetPoint("TOPLEFT", 10, -60)
@@ -49,6 +56,7 @@ function SimpleTimer:CreateMainFrame()
     -- Create Views
     self.timerFrame = self:CreateTimerUI(self.contentFrame)
     self.simpleWatchFrame = self:CreateSimpleWatchUI(self.contentFrame)
+    self.simpleReminderFrame = self:CreateSimpleReminderUI(self.contentFrame)
 
     -- Initial Select
     self:SelectTab(1)
@@ -61,13 +69,24 @@ function SimpleTimer:SelectTab(id)
     if id == 1 then
         self.timerFrame:Show()
         self.simpleWatchFrame:Hide()
+        self.simpleReminderFrame:Hide()
         self.tab1:Disable()
         self.tab2:Enable()
-    else
+        self.tab3:Enable()
+    elseif id == 2 then
         self.timerFrame:Hide()
         self.simpleWatchFrame:Show()
+        self.simpleReminderFrame:Hide()
         self.tab1:Enable()
         self.tab2:Disable()
+        self.tab3:Enable()
+    else
+        self.timerFrame:Hide()
+        self.simpleWatchFrame:Hide()
+        self.simpleReminderFrame:Show()
+        self.tab1:Enable()
+        self.tab2:Enable()
+        self.tab3:Disable()
     end
 end
 
@@ -213,6 +232,9 @@ function SimpleTimer:OnUpdate(elapsed)
         if self.stopwatchRunning then
             self:UpdateStopwatch()
         end
+
+        -- Check Reminder
+        self:CheckReminder()
 
         self.lastUpdate = 0
     end
