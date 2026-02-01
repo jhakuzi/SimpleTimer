@@ -1,3 +1,5 @@
+! Heavily vibe-coded using Google Antigravity !
+
 # SimpleTimer
 
 A lightweight World of Warcraft addon providing a countdown timer, a stopwatch, and a daily reminder (alarm) through a clean, tabbed interface.
