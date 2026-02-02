@@ -10,6 +10,74 @@ SimpleTimer.totalTime = 0
 SimpleTimer.isRunning = false
 SimpleTimer.startTime = 0
 
+function SimpleTimer:SaveVariables()
+    SimpleTimerDB = SimpleTimerDB or {}
+    SimpleTimerDB.timer = {
+        remainingTime = self.remainingTime,
+        totalTime = self.totalTime,
+        isRunning = self.isRunning,
+        startTime = self.startTime
+    }
+    
+    -- We also need to save watch and reminder state, but they are in this table's fields
+    SimpleTimerDB.watch = {
+        running = self.stopwatchRunning,
+        startTime = self.stopwatchStartTime,
+        elapsedAtPause = self.stopwatchElapsedAtPause
+    }
+    
+    SimpleTimerDB.reminder = {
+        time = self.reminderTime,
+        set = self.reminderSet
+    }
+end
+
+function SimpleTimer:LoadVariables()
+    if not SimpleTimerDB then return end
+    
+    -- Load Timer
+    if SimpleTimerDB.timer then
+        self.remainingTime = SimpleTimerDB.timer.remainingTime or 0
+        self.totalTime = SimpleTimerDB.timer.totalTime or 0
+        self.isRunning = SimpleTimerDB.timer.isRunning or false
+        self.startTime = SimpleTimerDB.timer.startTime or 0
+        
+        if self.isRunning then
+            self.startPauseButton:SetText("Pause")
+        else
+            if self.remainingTime > 0 and self.remainingTime < self.totalTime then
+                 self.startPauseButton:SetText("Resume")
+            else
+                 self.startPauseButton:SetText("Start")
+            end
+        end
+        self:UpdateDisplay()
+    end
+    
+    -- Load Watch
+    if SimpleTimerDB.watch then
+        self.stopwatchRunning = SimpleTimerDB.watch.running or false
+        self.stopwatchStartTime = SimpleTimerDB.watch.startTime or 0
+        self.stopwatchElapsedAtPause = SimpleTimerDB.watch.elapsedAtPause or 0
+        
+        if self.stopwatchRunning then
+            self.swStartPauseButton:SetText("Pause")
+        elseif self.stopwatchElapsedAtPause > 0 then
+             self.swStartPauseButton:SetText("Resume")
+        end
+        self:UpdateStopwatch()
+    end
+    
+    -- Load Reminder
+    if SimpleTimerDB.reminder then
+        self.reminderTime = SimpleTimerDB.reminder.time
+        self.reminderSet = SimpleTimerDB.reminder.set
+        if self.reminderSet and self.reminderTime then
+            self.reminderStatus:SetText("Alarm set for: " .. self.reminderTime)
+        end
+    end
+end
+
 -- Create the main frame with tabs
 function SimpleTimer:CreateMainFrame()
     -- Main frame
@@ -165,6 +233,7 @@ function SimpleTimer:StartTimer()
     self.startTime = GetTime()
     self.isRunning = true
     self.startPauseButton:SetText("Pause")
+    self:SaveVariables()
     self:UpdateDisplay()
 end
 
@@ -176,6 +245,7 @@ function SimpleTimer:PauseTimer()
         self.remainingTime = math.max(0, self.remainingTime - elapsed)
         self.isRunning = false
         self.startPauseButton:SetText("Resume")
+        self:SaveVariables()
     end
 end
 
@@ -185,6 +255,7 @@ function SimpleTimer:ResumeTimer()
         self.startTime = GetTime()
         self.isRunning = true
         self.startPauseButton:SetText("Pause")
+        self:SaveVariables()
     end
 end
 
@@ -194,6 +265,7 @@ function SimpleTimer:ResetTimer()
     self.remainingTime = 0
     self.startTime = 0
     self.startPauseButton:SetText("Start")
+    self:SaveVariables()
     self:UpdateDisplay()
 end
 
@@ -259,6 +331,7 @@ end
 -- Initialize the addon
 function SimpleTimer:Initialize()
     self:CreateMainFrame()
+    self:LoadVariables()
 
     -- Register slash commands
     SLASH_SIMPLETIMER1 = "/timer"

@@ -68,6 +68,7 @@ function SimpleTimer:SetReminder(timeStr)
     self.reminderSet = true
     self.reminderStatus:SetText("Alarm set for: " .. timeStr)
     print("SimpleTimer: Alarm set for " .. timeStr)
+    SimpleTimer:SaveVariables()
 end
 
 -- Clear reminder
@@ -76,6 +77,7 @@ function SimpleTimer:ClearReminder()
     self.reminderSet = false
     self.reminderStatus:SetText("No reminder set")
     print("SimpleTimer: Reminder cleared")
+    SimpleTimer:SaveVariables()
 end
 
 -- Check reminder loop

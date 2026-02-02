@@ -52,6 +52,7 @@ function SimpleTimer:StartStopwatch()
     self.stopwatchStartTime = GetTime()
     self.stopwatchRunning = true
     self.swStartPauseButton:SetText("Pause")
+    SimpleTimer:SaveVariables()
 end
 
 -- Pause the stopwatch
@@ -61,6 +62,7 @@ function SimpleTimer:PauseStopwatch()
         self.stopwatchElapsedAtPause = (currentTime - self.stopwatchStartTime) + self.stopwatchElapsedAtPause
         self.stopwatchRunning = false
         self.swStartPauseButton:SetText("Resume")
+        SimpleTimer:SaveVariables()
     end
 end
 
@@ -71,6 +73,7 @@ function SimpleTimer:ResetStopwatch()
     self.stopwatchElapsedAtPause = 0
     self.stopwatchDisplay:SetText("00:00")
     self.swStartPauseButton:SetText("Start")
+    SimpleTimer:SaveVariables()
 end
 
 -- Toggle stopwatch

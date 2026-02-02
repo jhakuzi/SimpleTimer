@@ -4,6 +4,7 @@
 ## Author: Jhakuzi
 ## Version: 1.0
 ## IconTexture: Interface\Icons\spell_mage_altertime
+## SavedVariables: SimpleTimerDB
 
 SimpleTimer.lua
 SimpleWatch.lua
