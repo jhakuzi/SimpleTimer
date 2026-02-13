@@ -1,4 +1,4 @@
-## Interface: 120000
+## Interface: 120001
 ## Title: SimpleTimer
 ## Notes: A simple countdown timer addon with start/pause/reset functionality
 ## Author: Jhakuzi
