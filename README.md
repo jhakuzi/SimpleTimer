@@ -20,12 +20,19 @@ A lightweight World of Warcraft addon providing a countdown timer, a stopwatch, 
 - **Format**: Uses standard 24-hour format (e.g., 14:30 for 2:30 PM).
 - **Persistent**: Keeps track of the set time until cleared.
 
+### 📈 XP Tab
+- **XP/hr Calculation**: Tracks experience gained over time to calculate an active XP per hour rate.
+- **Time to Level (TTL)**: Estimates the time remaining to reach the next level based on your current XP/hr.
+- **Session Tracking**: Displays total XP gained and elapsed time for the current tracking session.
+- **Controls**: Start, pause, and reset tracking independently of other timers.
+
 ### Common Features
 - **Start/Pause/Resume**: Full control over all timing functions.
 - **Reset**: Quickly reset counters to zero.
 - **Chat Command**: Use `/timer` or `/simpletimer` to toggle the window.
 - **Movable Window**: Drag the window anywhere on your screen.
 - **Persistent Operation**: All features continue running even when the window is hidden or you switch tabs.
+- **State Persistence**: Timers, stopwatches, reminders, and XP tracking survive UI reloads (`/reload`) and relogging.
 
 ## Installation
 
@@ -38,7 +45,7 @@ A lightweight World of Warcraft addon providing a countdown timer, a stopwatch, 
 ## Usage
 
 1. Type `/timer` or `/simpletimer` in chat to show/hide the main window.
-2. Use the **Tabs** at the top to switch between "Timer", "SimpleWatch", and "Reminder".
+2. Use the **Tabs** at the top to switch between "Timer", "Stopwatch", "Reminder", and "XP".
 
 ### Using the Timer
 1. Select the **Timer** tab.
@@ -55,8 +62,13 @@ A lightweight World of Warcraft addon providing a countdown timer, a stopwatch, 
 3. Click **Set** to activate the alarm.
 4. Click **Clear** to remove the set reminder.
 
+### Using the XP Tracker
+1. Select the **XP** tab.
+2. Click **Start** to begin tracking your experience gains.
+3. Use **Pause** to temporarily halt tracking, and **Reset** to clear the current session data.
+
 ## Notes
 
 - The window position is movable - click and drag the title bar.
-- All states (timer, stopwatch, and reminder) are maintained when switching tabs or closing the window.
+- All states (timer, stopwatch, reminder, and XP) are maintained when switching tabs, closing the window, or reloading the UI.
 - Smooth updates (10 times per second) ensure the display remains accurate and responsive.
