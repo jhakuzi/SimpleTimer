@@ -30,6 +30,15 @@ function SimpleTimer:SaveVariables()
         time = self.reminderTime,
         set = self.reminderSet
     }
+    
+    SimpleTimerDB.xp = {
+        running = self.xpRunning,
+        startTime = self.xpStartTime,
+        elapsedAtPause = self.xpElapsedAtPause,
+        startValue = self.xpStartValue,
+        maxAtStart = self.xpMaxAtStart,
+        gained = self.xpGained
+    }
 end
 
 function SimpleTimer:LoadVariables()
@@ -76,13 +85,31 @@ function SimpleTimer:LoadVariables()
             self.reminderStatus:SetText("Alarm set for: " .. self.reminderTime)
         end
     end
+    
+    -- Load XP Tracker
+    if SimpleTimerDB.xp then
+        self.xpRunning = SimpleTimerDB.xp.running or false
+        self.xpStartTime = SimpleTimerDB.xp.startTime or 0
+        self.xpElapsedAtPause = SimpleTimerDB.xp.elapsedAtPause or 0
+        self.xpStartValue = SimpleTimerDB.xp.startValue or 0
+        self.xpMaxAtStart = SimpleTimerDB.xp.maxAtStart or 1
+        self.xpGained = SimpleTimerDB.xp.gained or 0
+        
+        if self.xpRunning then
+            self.xpStartPauseButton:SetText("Pause")
+        elseif self.xpElapsedAtPause > 0 then
+            self.xpStartPauseButton:SetText("Resume")
+        end
+        self:UpdateXPTracker()
+        self.xpGainedDisplay:SetText(tostring(self.xpGained))
+    end
 end
 
 -- Create the main frame with tabs
 function SimpleTimer:CreateMainFrame()
     -- Main frame
     self.frame = CreateFrame("Frame", "SimpleTimerFrame", UIParent, "BasicFrameTemplateWithInset")
-    self.frame:SetSize(270, 180)
+    self.frame:SetSize(350, 180)
     self.frame:SetPoint("CENTER")
     self.frame:SetMovable(true)
     self.frame:EnableMouse(true)
@@ -98,15 +125,15 @@ function SimpleTimer:CreateMainFrame()
     -- Tab 1: Timer
     self.tab1 = CreateFrame("Button", nil, self.frame, "GameMenuButtonTemplate")
     self.tab1:SetSize(80, 20)
-    self.tab1:SetPoint("TOPLEFT", self.frame, "TOP", -130, -35)
+    self.tab1:SetPoint("TOPLEFT", self.frame, "TOP", -170, -35)
     self.tab1:SetText("Timer")
     self.tab1:SetScript("OnClick", function() self:SelectTab(1) end)
 
-    -- Tab 2: SimpleWatch
+    -- Tab 2: Stopwatch
     self.tab2 = CreateFrame("Button", nil, self.frame, "GameMenuButtonTemplate")
     self.tab2:SetSize(100, 20)
     self.tab2:SetPoint("LEFT", self.tab1, "RIGHT", 0, 0)
-    self.tab2:SetText("SimpleWatch")
+    self.tab2:SetText("Stopwatch")
     self.tab2:SetScript("OnClick", function() self:SelectTab(2) end)
 
     -- Tab 3: Reminder
@@ -115,6 +142,13 @@ function SimpleTimer:CreateMainFrame()
     self.tab3:SetPoint("LEFT", self.tab2, "RIGHT", 0, 0)
     self.tab3:SetText("Reminder")
     self.tab3:SetScript("OnClick", function() self:SelectTab(3) end)
+
+    -- Tab 4: XP Tracker
+    self.tab4 = CreateFrame("Button", nil, self.frame, "GameMenuButtonTemplate")
+    self.tab4:SetSize(80, 20)
+    self.tab4:SetPoint("LEFT", self.tab3, "RIGHT", 0, 0)
+    self.tab4:SetText("XP")
+    self.tab4:SetScript("OnClick", function() self:SelectTab(4) end)
 
     -- Content Container
     self.contentFrame = CreateFrame("Frame", nil, self.frame)
@@ -125,6 +159,7 @@ function SimpleTimer:CreateMainFrame()
     self.timerFrame = self:CreateTimerUI(self.contentFrame)
     self.simpleWatchFrame = self:CreateSimpleWatchUI(self.contentFrame)
     self.simpleReminderFrame = self:CreateSimpleReminderUI(self.contentFrame)
+    self.simpleXPFrame = self:CreateSimpleXPUI(self.contentFrame)
 
     -- Initial Select
     self:SelectTab(1)
@@ -134,27 +169,28 @@ function SimpleTimer:CreateMainFrame()
 end
 
 function SimpleTimer:SelectTab(id)
+    self.timerFrame:Hide()
+    self.simpleWatchFrame:Hide()
+    self.simpleReminderFrame:Hide()
+    self.simpleXPFrame:Hide()
+    
+    self.tab1:Enable()
+    self.tab2:Enable()
+    self.tab3:Enable()
+    self.tab4:Enable()
+
     if id == 1 then
         self.timerFrame:Show()
-        self.simpleWatchFrame:Hide()
-        self.simpleReminderFrame:Hide()
         self.tab1:Disable()
-        self.tab2:Enable()
-        self.tab3:Enable()
     elseif id == 2 then
-        self.timerFrame:Hide()
         self.simpleWatchFrame:Show()
-        self.simpleReminderFrame:Hide()
-        self.tab1:Enable()
         self.tab2:Disable()
-        self.tab3:Enable()
-    else
-        self.timerFrame:Hide()
-        self.simpleWatchFrame:Hide()
+    elseif id == 3 then
         self.simpleReminderFrame:Show()
-        self.tab1:Enable()
-        self.tab2:Enable()
         self.tab3:Disable()
+    else
+        self.simpleXPFrame:Show()
+        self.tab4:Disable()
     end
 end
 
@@ -303,6 +339,11 @@ function SimpleTimer:OnUpdate(elapsed)
         -- Stopwatch Logic
         if self.stopwatchRunning then
             self:UpdateStopwatch()
+        end
+
+        -- XP Tracker Logic
+        if self.xpRunning then
+            self:UpdateXPTracker()
         end
 
         -- Check Reminder
