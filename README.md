@@ -2,7 +2,7 @@
 
 # SimpleTimer
 
-A lightweight World of Warcraft addon providing a countdown timer, a stopwatch, and a daily reminder (alarm) through a clean, tabbed interface.
+A lightweight World of Warcraft addon providing a countdown timer, a stopwatch, a daily reminder (alarm), and an XP tracker through a clean, tabbed interface.
 
 ## Features
 
@@ -65,7 +65,7 @@ A lightweight World of Warcraft addon providing a countdown timer, a stopwatch, 
 ### Using the XP Tracker
 1. Select the **XP** tab.
 2. Click **Start** to begin tracking your experience gains.
-3. Use **Pause** to temporarily halt tracking, and **Reset** to clear the current session data.
+3. Use **Pause** to temporarily halt tracking. Use **Reset** to clear the current session data (if the tracker is running, it will automatically restart from zero; if paused, it will remain stopped).
 
 ## Notes
 
