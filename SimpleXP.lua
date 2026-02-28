@@ -98,18 +98,24 @@ function SimpleTimer:PauseXPTracker()
 end
 
 function SimpleTimer:ResetXPTracker()
+    local wasRunning = self.xpRunning
     self.xpRunning = false
     self.xpStartTime = 0
     self.xpElapsedAtPause = 0
     self.xpStartValue = 0
     self.xpMaxAtStart = 0
     self.xpGained = 0
-    self.xpStartPauseButton:SetText("Start")
     self.xpGainedDisplay:SetText("0")
     self.xpPerHourDisplay:SetText("0")
     self.xpTimeToLevelDisplay:SetText("TTL: --:--:--")
     self.xpElapsedDisplay:SetText("Elapsed: 00:00:00")
-    self:SaveVariables()
+    
+    if wasRunning then
+        self:StartXPTracker()
+    else
+        self.xpStartPauseButton:SetText("Start")
+        self:SaveVariables()
+    end
 end
 
 function SimpleTimer:OnXPUpdate()
