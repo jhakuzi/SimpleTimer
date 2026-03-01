@@ -44,6 +44,13 @@ function SimpleTimer:CreateSimpleXPUI(parent)
     self.xpElapsedDisplay:SetPoint("TOP", 0, -100)
     self.xpElapsedDisplay:SetText("Elapsed: 00:00:00")
 
+    -- Project Button
+    self.xpProjectButton = CreateFrame("Button", nil, frame, "GameMenuButtonTemplate")
+    self.xpProjectButton:SetSize(110, 25)
+    self.xpProjectButton:SetPoint("BOTTOM", 0, 10)
+    self.xpProjectButton:SetText("Send to screen")
+    self.xpProjectButton:SetScript("OnClick", function() SimpleTimer:ToggleXPProjected() end)
+
     -- Start/Pause Button
     self.xpStartPauseButton = CreateFrame("Button", nil, frame, "GameMenuButtonTemplate")
     self.xpStartPauseButton:SetSize(80, 25)
@@ -109,6 +116,12 @@ function SimpleTimer:ResetXPTracker()
     self.xpPerHourDisplay:SetText("0")
     self.xpTimeToLevelDisplay:SetText("TTL: --:--:--")
     self.xpElapsedDisplay:SetText("Elapsed: 00:00:00")
+    if self.xpProjectedFrame then
+        self.xpProjGained:SetText("Gained: 0")
+        self.xpProjPerHour:SetText("XP/hr: 0")
+        self.xpProjTTL:SetText("TTL: --:--:--")
+        self.xpProjElapsed:SetText("Elapsed: 00:00:00")
+    end
     
     if wasRunning then
         self:StartXPTracker()
@@ -134,6 +147,9 @@ function SimpleTimer:OnXPUpdate()
         self.xpMaxAtStart = maxXP
         
         self.xpGainedDisplay:SetText(tostring(self.xpGained))
+        if self.xpProjectedFrame then
+            self.xpProjGained:SetText("Gained: " .. tostring(self.xpGained))
+        end
         -- Save optionally, but skip frequently. Wait till close/pause.
     end
 end
@@ -152,10 +168,16 @@ function SimpleTimer:UpdateXPTracker()
     end
     
     self.xpElapsedDisplay:SetText("Elapsed: " .. self:FormatElapsedTime(math.floor(elapsed)))
+    if self.xpProjectedFrame then
+        self.xpProjElapsed:SetText("Elapsed: " .. self:FormatElapsedTime(math.floor(elapsed)))
+    end
     
     if elapsed > 0 then
         local xpPerHour = math.floor((self.xpGained / elapsed) * 3600)
         self.xpPerHourDisplay:SetText(tostring(xpPerHour))
+        if self.xpProjectedFrame then
+            self.xpProjPerHour:SetText("XP/hr: " .. tostring(xpPerHour))
+        end
         
         if xpPerHour > 0 then
             local currentXP = UnitXP("player") or 0
@@ -164,14 +186,93 @@ function SimpleTimer:UpdateXPTracker()
             if xpNeeded > 0 then
                 local secondsToLevel = (xpNeeded / xpPerHour) * 3600
                 self.xpTimeToLevelDisplay:SetText("TTL: " .. self:FormatElapsedTime(math.floor(secondsToLevel)))
+                if self.xpProjectedFrame then
+                    self.xpProjTTL:SetText("TTL: " .. self:FormatElapsedTime(math.floor(secondsToLevel)))
+                end
             else
                 self.xpTimeToLevelDisplay:SetText("TTL: 00:00:00")
+                if self.xpProjectedFrame then
+                    self.xpProjTTL:SetText("TTL: 00:00:00")
+                end
             end
         else
             self.xpTimeToLevelDisplay:SetText("TTL: --:--:--")
+            if self.xpProjectedFrame then
+                self.xpProjTTL:SetText("TTL: --:--:--")
+            end
         end
     else
         self.xpPerHourDisplay:SetText("0")
         self.xpTimeToLevelDisplay:SetText("TTL: --:--:--")
+        if self.xpProjectedFrame then
+            self.xpProjPerHour:SetText("XP/hr: 0")
+            self.xpProjTTL:SetText("TTL: --:--:--")
+        end
     end
+end
+
+function SimpleTimer:CreateXPProjectedFrame()
+    local frame = CreateFrame("Frame", "SimpleXPProjectedFrame", UIParent)
+    frame:SetSize(120, 70)
+    frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+    frame:SetMovable(true)
+    frame:EnableMouse(true)
+    frame:RegisterForDrag("LeftButton")
+    frame:SetScript("OnDragStart", frame.StartMoving)
+    frame:SetScript("OnDragStop", function(selfObj)
+        selfObj:StopMovingOrSizing()
+        SimpleTimer:SaveVariables()
+    end)
+    
+    local bg = frame:CreateTexture(nil, "BACKGROUND")
+    bg:SetAllPoints()
+    bg:SetColorTexture(0, 0, 0, 0)
+
+    self.xpProjGained = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    self.xpProjGained:SetPoint("TOP", 0, -5)
+    self.xpProjGained:SetText("Gained: 0")
+
+    self.xpProjPerHour = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    self.xpProjPerHour:SetPoint("TOP", 0, -20)
+    self.xpProjPerHour:SetText("XP/hr: 0")
+
+    self.xpProjTTL = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    self.xpProjTTL:SetPoint("TOP", 0, -35)
+    self.xpProjTTL:SetText("TTL: --:--:--")
+    
+    self.xpProjElapsed = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    self.xpProjElapsed:SetPoint("TOP", 0, -50)
+    self.xpProjElapsed:SetText("Elapsed: 00:00:00")
+
+    frame:SetScript("OnEnter", function(selfObj)
+        GameTooltip:SetOwner(selfObj, "ANCHOR_RIGHT")
+        GameTooltip:SetText("XP Tracker (Projected)")
+        GameTooltip:AddLine("Left-click and drag to move", 1, 1, 1)
+        GameTooltip:Show()
+    end)
+    frame:SetScript("OnLeave", function(selfObj)
+        GameTooltip:Hide()
+    end)
+
+    frame:Hide()
+    self.xpProjectedFrame = frame
+end
+
+function SimpleTimer:ToggleXPProjected()
+    if not self.xpProjectedFrame then
+        self:CreateXPProjectedFrame()
+    end
+
+    if self.xpProjectedFrame:IsShown() then
+        self.xpProjectedFrame:Hide()
+        self.xpProjectButton:SetText("Send to screen")
+        self.xpProjected = false
+    else
+        self.xpProjectedFrame:Show()
+        self.xpProjectButton:SetText("Unproject")
+        self.xpProjected = true
+        self:UpdateXPTracker()
+        self.xpProjGained:SetText("Gained: " .. tostring(self.xpGained))
+    end
+    self:SaveVariables()
 end

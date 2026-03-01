@@ -31,13 +31,28 @@ function SimpleTimer:SaveVariables()
         set = self.reminderSet
     }
     
+    local projPoint, projRelativePoint, projX, projY
+    if self.xpProjectedFrame then
+        projPoint, _, projRelativePoint, projX, projY = self.xpProjectedFrame:GetPoint()
+    elseif SimpleTimerDB and SimpleTimerDB.xp then
+        projPoint = SimpleTimerDB.xp.projPoint
+        projRelativePoint = SimpleTimerDB.xp.projRelativePoint
+        projX = SimpleTimerDB.xp.projX
+        projY = SimpleTimerDB.xp.projY
+    end
+
     SimpleTimerDB.xp = {
         running = self.xpRunning,
         startTime = self.xpStartTime,
         elapsedAtPause = self.xpElapsedAtPause,
         startValue = self.xpStartValue,
         maxAtStart = self.xpMaxAtStart,
-        gained = self.xpGained
+        gained = self.xpGained,
+        projected = self.xpProjected,
+        projPoint = projPoint,
+        projRelativePoint = projRelativePoint,
+        projX = projX,
+        projY = projY
     }
 end
 
@@ -94,6 +109,7 @@ function SimpleTimer:LoadVariables()
         self.xpStartValue = SimpleTimerDB.xp.startValue or 0
         self.xpMaxAtStart = SimpleTimerDB.xp.maxAtStart or 1
         self.xpGained = SimpleTimerDB.xp.gained or 0
+        self.xpProjected = SimpleTimerDB.xp.projected or false
         
         if self.xpRunning then
             self.xpStartPauseButton:SetText("Pause")
@@ -102,6 +118,15 @@ function SimpleTimer:LoadVariables()
         end
         self:UpdateXPTracker()
         self.xpGainedDisplay:SetText(tostring(self.xpGained))
+
+        if self.xpProjected then
+            self.xpProjected = false
+            self:ToggleXPProjected()
+            if self.xpProjectedFrame and SimpleTimerDB.xp.projPoint then
+                self.xpProjectedFrame:ClearAllPoints()
+                self.xpProjectedFrame:SetPoint(SimpleTimerDB.xp.projPoint, UIParent, SimpleTimerDB.xp.projRelativePoint, SimpleTimerDB.xp.projX, SimpleTimerDB.xp.projY)
+            end
+        end
     end
 end
 
@@ -373,6 +398,10 @@ end
 function SimpleTimer:Initialize()
     self:CreateMainFrame()
     self:LoadVariables()
+
+    if self.InitializeMinimapIcon then
+        self:InitializeMinimapIcon()
+    end
 
     -- Register slash commands
     SLASH_SIMPLETIMER1 = "/timer"

@@ -20,6 +20,7 @@ A lightweight World of Warcraft addon providing a countdown timer, a stopwatch, 
 - **Persistent**: Keeps track of the set time until cleared.
 
 ### XP Tab
+- **Projected UI**: Click "Send to screen" to detach a borderless, draggable overlay of the tracker directly onto your game screen.
 - **XP/hr Calculation**: Tracks experience gained over time to calculate an active XP per hour rate.
 - **Time to Level (TTL)**: Estimates the time remaining to reach the next level based on your current XP/hr.
 - **Session Tracking**: Displays total XP gained and elapsed time for the current tracking session.
@@ -63,7 +64,8 @@ A lightweight World of Warcraft addon providing a countdown timer, a stopwatch, 
 ### Using the XP Tracker
 1. Select the **XP** tab.
 2. Click **Start** to begin tracking your experience gains.
-3. Use **Pause** to temporarily halt tracking. Use **Reset** to clear the current session data (if the tracker is running, it will automatically restart from zero; if paused, it will remain stopped).
+3. Click **Send to screen** to project the tracker text onto your screen. You can left-click and drag this overlay to position it wherever you like.
+4. Use **Pause** to temporarily halt tracking. Use **Reset** to clear the current session data (if the tracker is running, it will automatically restart from zero; if paused, it will remain stopped).
 
 ## Notes
 
