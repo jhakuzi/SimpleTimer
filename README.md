@@ -1,7 +1,7 @@
 
 # SimpleTimer
 
-A lightweight World of Warcraft addon providing a countdown timer, a stopwatch, a daily reminder (alarm), and an XP tracker through a clean, tabbed interface.
+A lightweight World of Warcraft addon providing a countdown timer, a stopwatch, a daily reminder (alarm), and an XP per hour tracker through a clean, tabbed interface.
 
 ## Features
 
