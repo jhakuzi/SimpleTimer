@@ -1,4 +1,3 @@
-! Heavily vibe-coded using Google Antigravity !
 
 # SimpleTimer
 
@@ -6,21 +5,21 @@ A lightweight World of Warcraft addon providing a countdown timer, a stopwatch, 
 
 ## Features
 
-### ⏳ Timer Tab
+### Timer Tab
 - **Duration Input**: Enter timer duration in minutes.
 - **Countdown**: High-precision countdown from the set time.
 - **Notification**: Plays a sound and prints a message when the timer finishes.
 
-### ⏱️ SimpleWatch Tab
+### Watch Tab
 - **Stopwatch**: A count-up timer to track elapsed time.
 - **Independent**: Runs independently of the countdown timer and reminders.
 
-### 🔔 Reminder Tab
+### Reminder Tab
 - **Daily Alarm**: Set a specific time (HH:MM) to receive a notification.
 - **Format**: Uses standard 24-hour format (e.g., 14:30 for 2:30 PM).
 - **Persistent**: Keeps track of the set time until cleared.
 
-### 📈 XP Tab
+### XP Tab
 - **XP/hr Calculation**: Tracks experience gained over time to calculate an active XP per hour rate.
 - **Time to Level (TTL)**: Estimates the time remaining to reach the next level based on your current XP/hr.
 - **Session Tracking**: Displays total XP gained and elapsed time for the current tracking session.
@@ -53,7 +52,7 @@ A lightweight World of Warcraft addon providing a countdown timer, a stopwatch, 
 3. Click **Start** to begin.
 
 ### Using the Stopwatch
-1. Select the **SimpleWatch** tab.
+1. Select the **Watch** tab.
 2. Click **Start** to begin counting up.
 
 ### Using the Reminder
