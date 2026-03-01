@@ -409,7 +409,8 @@ function SimpleTimer:Initialize()
     SlashCmdList["SIMPLETIMER"] = function() self:ToggleWindow() end
 
     -- Set up update handler
-    self.frame:SetScript("OnUpdate", function(_, elapsed) self:OnUpdate(elapsed) end)
+    self.updateFrame = CreateFrame("Frame")
+    self.updateFrame:SetScript("OnUpdate", function(_, elapsed) self:OnUpdate(elapsed) end)
 
     print("SimpleTimer loaded! Use /timer to toggle the timer window.")
 end
