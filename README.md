@@ -37,7 +37,6 @@ A lightweight World of Warcraft addon providing a countdown timer, a stopwatch, 
 
 1. Copy the `SimpleTimer` folder to your World of Warcraft addons directory:
    - Retail: `World of Warcraft/_retail_/Interface/AddOns/`
-   - Classic: `World of Warcraft/_classic_/Interface/AddOns/`
 
 2. Reload your UI with `/reload` or restart the game.
 
