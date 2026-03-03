@@ -332,10 +332,12 @@ end
 function SimpleTools:UpdateDisplay()
     local displayTime = self.remainingTime
     if self.isRunning then
-        local elapsed = GetTime() - self.startTime
+        local currentTime = GetTime()
+        local elapsed = currentTime - self.startTime
         displayTime = math.max(0, self.remainingTime - elapsed)
     end
 
+    -- Cache the formatted time string to avoid repeated formatting
     if displayTime > 0 then
         self.timerDisplay:SetText(self:FormatTime(displayTime))
     else
@@ -409,12 +411,13 @@ end
 function SimpleTools:OnUpdate(elapsed)
     self.lastUpdate = (self.lastUpdate or 0) + elapsed
 
-    -- Only update once per 0.1s for smoother stopwatch, but timer logic can check every 1s
-    if self.lastUpdate >= 0.1 then
+    -- Throttle updates to 0.3s interval for better performance
+    if self.lastUpdate >= 0.3 then
+        local currentTime = GetTime()
         
         -- Timer Logic
         if self.isRunning then
-             local elapsedTime = GetTime() - self.startTime
+             local elapsedTime = currentTime - self.startTime
              local currentRemaining = math.max(0, self.remainingTime - elapsedTime)
              self:UpdateDisplay()
              
