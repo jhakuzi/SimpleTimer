@@ -1,7 +1,7 @@
 
 # SimpleTools
 
-A lightweight World of Warcraft addon providing a countdown timer, a stopwatch, a daily reminder (alarm), an XP per hour tracker, and a gold per hour tracker through a clean, tabbed interface.
+A lightweight World of Warcraft addon providing various tools to improve your gameplay experience.
 
 ## Features
 
