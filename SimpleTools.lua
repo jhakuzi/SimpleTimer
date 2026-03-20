@@ -77,6 +77,10 @@ function SimpleTools:SaveVariables()
         projX = goldProjX,
         projY = goldProjY
     }
+
+    SimpleToolsDB.shopping = {
+        list = self.shoppingList or {}
+    }
 end
 
 function SimpleTools:LoadVariables()
@@ -177,13 +181,20 @@ function SimpleTools:LoadVariables()
             end
         end
     end
+
+    -- Load Shopping Tracker
+    if SimpleToolsDB.shopping then
+        self.shoppingList = SimpleToolsDB.shopping.list or {}
+    else
+        self.shoppingList = {}
+    end
 end
 
 -- Create the main frame with tabs
 function SimpleTools:CreateMainFrame()
     -- Main frame
     self.frame = CreateFrame("Frame", "SimpleToolsFrame", UIParent, "BasicFrameTemplateWithInset")
-    self.frame:SetSize(420, 180)
+    self.frame:SetSize(490, 180)
     self.frame:SetPoint("CENTER")
     self.frame:SetMovable(true)
     self.frame:EnableMouse(true)
@@ -199,7 +210,7 @@ function SimpleTools:CreateMainFrame()
     -- Tab 1: Timer
     self.tab1 = CreateFrame("Button", nil, self.frame, "GameMenuButtonTemplate")
     self.tab1:SetSize(80, 20)
-    self.tab1:SetPoint("TOPLEFT", self.frame, "TOP", -205, -35)
+    self.tab1:SetPoint("TOPLEFT", self.frame, "TOP", -240, -35)
     self.tab1:SetText("Timer")
     self.tab1:SetScript("OnClick", function() self:SelectTab(1) end)
 
@@ -231,6 +242,13 @@ function SimpleTools:CreateMainFrame()
     self.tab5:SetText("Gold")
     self.tab5:SetScript("OnClick", function() self:SelectTab(5) end)
 
+    -- Tab 6: Shopping
+    self.tab6 = CreateFrame("Button", nil, self.frame, "GameMenuButtonTemplate")
+    self.tab6:SetSize(80, 20)
+    self.tab6:SetPoint("LEFT", self.tab5, "RIGHT", 0, 0)
+    self.tab6:SetText("Shopping")
+    self.tab6:SetScript("OnClick", function() self:SelectTab(6) end)
+
     -- Content Container
     self.contentFrame = CreateFrame("Frame", nil, self.frame)
     self.contentFrame:SetPoint("TOPLEFT", 10, -60)
@@ -242,6 +260,7 @@ function SimpleTools:CreateMainFrame()
     self.simpleReminderFrame = self:CreateSimpleReminderUI(self.contentFrame)
     self.simpleXPFrame = self:CreateSimpleXPUI(self.contentFrame)
     self.simpleGoldFrame = self:CreateSimpleGoldUI(self.contentFrame)
+    self.simpleShoppingFrame = self:CreateSimpleShoppingUI(self.contentFrame)
 
     -- Initial Select
     self:SelectTab(1)
@@ -256,12 +275,14 @@ function SimpleTools:SelectTab(id)
     self.simpleReminderFrame:Hide()
     self.simpleXPFrame:Hide()
     self.simpleGoldFrame:Hide()
+    self.simpleShoppingFrame:Hide()
     
     self.tab1:Enable()
     self.tab2:Enable()
     self.tab3:Enable()
     self.tab4:Enable()
     self.tab5:Enable()
+    self.tab6:Enable()
 
     if id == 1 then
         self.timerFrame:Show()
@@ -278,6 +299,9 @@ function SimpleTools:SelectTab(id)
     elseif id == 5 then
         self.simpleGoldFrame:Show()
         self.tab5:Disable()
+    elseif id == 6 then
+        self.simpleShoppingFrame:Show()
+        self.tab6:Disable()
     end
 end
 
